@@ -58,9 +58,9 @@ async function generateqrCode(data) {
   }
 }
 const screentShot = async (req, res) => {
-    let image = `${req.file.path}-${req.file.originalname}`;
+    let image = `${req.file.path}`;
   try {
-    const {   transactionId,name,paymentDate,screenShot } = req.body;
+    const { transactionId, name, paymentDate, screenShot, approve } = req.body;
     const existingPayment = await PaymentD.findOne({ transactionId });
     if (existingPayment) {
       return res
@@ -70,8 +70,9 @@ const screentShot = async (req, res) => {
     const newPayment = new PaymentD({
       transactionId,
       name,
-      screenShot:image,
-      paymentDate
+      screenShot: image,
+      paymentDate,
+      approve,
     });
     await newPayment.save();
     res.status(201).json({ status: "success", payment: newPayment });
@@ -84,6 +85,27 @@ const getScreenshot = async(req,res)=>{
     try {
         const  payment = await PaymentD.find();
          res.status(200).json({msg:"getting payment Details", status:"success", payment})
+    } catch (error) {
+        throw error
+    }
+}
+
+const getApprove = async (req, res) => {
+    const {id} = req.params;
+    const {approve}= req.body;
+  try {
+    const payment = await PaymentD.findByIdAndUpdate({_id:id}, {approve}, {new:true});
+    res
+      .status(200)
+      .json({ msg: "getting payment Details", status: "success", payment });
+  } catch (error) {
+    throw error;
+  }
+};
+const readApprove=async(req,res)=>{
+    try {
+        const approve = await PaymentD.find();
+        res.status(200).json({msg:"you are book the room successfully", approve})
     } catch (error) {
         throw error
     }
@@ -141,7 +163,9 @@ module.exports = {
   postPayment,
   upload,
   screentShot,
-  getScreenshot
+  getScreenshot,
+  getApprove,
+  readApprove,
   // putPayment,
   // deletePayment
 };
