@@ -3,7 +3,7 @@ const paymentSchema = new mongoose.Schema({
     paymentTentant:{type:String},
     amount: { type: Number, default:0 },
     paymentMethod: { type: String, default:"Phone Pay" },
-    paymentDate: { type:String, default:new Date() },
+    paymentDate: { type:Date, default:Date.now },
     apartmentId:{type:String},
     qrCodeLink:{type:String}
 },{

@@ -35,6 +35,7 @@ app.use('/contractImages', express.static("contractImages"));
 app.use('/logo', express.static("logo"));
 app.use('/apartmentImages',express.static('apartmentImages'));
 app.use("/AdharCardPdf",express.static("AdharCardPdf"));
+app.use("/paymentImages",express.static("paymentImages"));
 // app.use("/PanCardPdf",express.static("PanCardPdf"));
 app.use("/admin",adminRoute);
 app.use("/tentants",notificationRoute);
