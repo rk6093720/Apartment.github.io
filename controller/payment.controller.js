@@ -58,7 +58,7 @@ async function generateqrCode(data) {
   }
 }
 const screentShot = async (req, res) => {
-    let image = `${req.file.path}`;
+    let image = req.file ? req.file.path:null;
   try {
     const { transactionId, name, paymentDate, screenShot, approve } = req.body;
     const existingPayment = await PaymentD.findOne({ transactionId });

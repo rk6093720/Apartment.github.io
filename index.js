@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors')
 const dotenv = require("dotenv");
-const session = require('express-session');
 const { connection } = require('./Config/db');
 const {adminRoute }= require("./Routes/admin.routes");
 const { landLordRouter } = require('./Routes/landLord.routes');
@@ -26,11 +25,6 @@ dotenv.config();
 const port = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
-app.use(session({
-    secret: 'your-secret-key',
-    resave: false,
-    saveUninitialized:false,
-}));
 app.use('/contractImages', express.static("contractImages"));
 app.use('/logo', express.static("logo"));
 app.use('/apartmentImages',express.static('apartmentImages'));

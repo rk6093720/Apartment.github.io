@@ -3,8 +3,6 @@ const { getPayment, postPayment, screentShot, upload, getScreenshot, getApprove,
 const paymentRouter = Router();
 paymentRouter.get("/read",getPayment);
 paymentRouter.post("/create",postPayment);
-// paymentRouter.put("/update/:id",putPayment);
-// paymentRouter.delete("/remove/:id",deletePayment);
 paymentRouter.post("/screenshot",upload, screentShot);
 paymentRouter.get("/screentshot/read", getScreenshot );
 paymentRouter.patch("/approve/:id", getApprove)
