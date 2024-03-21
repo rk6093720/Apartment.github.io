@@ -1,11 +1,10 @@
 const { AdminModal } = require("../modal/admin.modal");
 const jwt=require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const session = require("express-session");
-const jwtSecret= process.env.JWT_SECRET;
+const jwtSecret= process.env.JWTSECRET;
 const nodemailer=require("nodemailer");
 const secret = process.env.ADMIN;
-const user = process.env.MIDDLE_USER;
+const user = process.env.MIDDLEUSER;
 const Login = async(req,res)=>{
     try {
         const { email, password,userType, createdAt, timeStamp, } = req.body;
@@ -23,10 +22,8 @@ const Login = async(req,res)=>{
             await newAdmin.save();
            }
             if (await bcrypt.compare(password, admin.password)) {
-                 const expiresInMinutes = 5; // Set expiration time in minutes
-                const expirationTime = new Date(Date.now() + expiresInMinutes * 60 * 1000); 
-                const token = jwt.sign({ email: admin.email,role:admin.userType }, jwtSecret, {
-                    expiresIn:expiresInMinutes * 60,
+            const token = jwt.sign({ email: admin.email,role:admin.userType }, jwtSecret, {
+                    expiresIn:"30min",
                 })
                 const expiretoken = jwt.verify(token, jwtSecret);
                 const role = admin.userType;
