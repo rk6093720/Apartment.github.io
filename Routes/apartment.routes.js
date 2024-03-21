@@ -1,21 +1,40 @@
-const {Router}= require("express");
-const { postApartment, getDetails, uploadImage, putApartment, deleteApartment, filterApartment, searchApartment  } = require("../controller/apartment.controller");
+const { Router } = require("express");
+const {
+  postApartment,
+  getDetails,
+  uploadImage,
+  putApartment,
+  deleteApartment,
+  filterApartment,
+  searchApartment,
+} = require("../controller/apartment.controller");
+const { middleware } = require("../middleware-term/auth");
+
 const apartmentRouter = Router();
-//read details of apartment
-apartmentRouter.get(
-  "/read",
-  getDetails
-);
-//create details of apartment
-apartmentRouter.post("/create", uploadImage,postApartment);
-//update details of apartment;
-apartmentRouter.put("/update/:id", uploadImage,putApartment);
-//delete details of apartment;
+
+// Middleware for authentication
+const { adminMiddleware, userMiddleware, superAdminMiddleware } = middleware;
+
+// Routes for reading apartment details based on user role
+apartmentRouter.get("/read/admin", adminMiddleware, getDetails);
+apartmentRouter.get("/read/user", userMiddleware, getDetails);
+apartmentRouter.get("/read/super-admin", superAdminMiddleware, getDetails);
+
+// Route for creating apartment details
+apartmentRouter.post("/create", uploadImage, postApartment);
+
+// Route for updating apartment details
+apartmentRouter.put("/update/:id", uploadImage, putApartment);
+
+// Route for deleting apartment details
 apartmentRouter.delete("/remove/:id", deleteApartment);
+
+// Route for filtering apartments
 apartmentRouter.get("/filter", filterApartment);
-apartmentRouter.get("/filter",filterApartment)
+
+// Route for searching apartments
 apartmentRouter.get("/search", searchApartment);
-apartmentRouter.get("/search", searchApartment);
-module.exports={
-    apartmentRouter
-} 
+
+module.exports = {
+  apartmentRouter,
+};
