@@ -11,25 +11,11 @@ const getTentant = async(req,res)=>{
     }
 }
 const postTentant = async (req, res) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    phone,
-    dateOfBirth,
-    residentalAddress,
-    currentAddress,
-    registrationofRoomRent,
-    approve,
+  let pdf  = req.file.path
+  const {firstName,lastName,email,phone,dateOfBirth,residentalAddress,currentAddress,aadharCard,registrationofRoomRent,approve,
   } = req.body;
   const { _id } = req.params;
   try {
-    
-      const aadharCard = req.files["aadharCard"]
-        ? req.files["aadharCard"][0].filename
-        : null;
-      // const panCard = req.files["panCard"] ? req.files["panCard"][0].filename
-      //   : null;
     const existingTentant = _id
       ? await TentantModal.findById(_id)
       : await TentantModal.findOne({ email });
@@ -47,8 +33,7 @@ const postTentant = async (req, res) => {
       dateOfBirth,
       residentalAddress,
       currentAddress,
-      aadharCard,
-      // panCard,
+      aadharCard:pdf,
       registrationofRoomRent,
       approve,
     };
@@ -127,7 +112,7 @@ const deleteTentant = async(req,res)=>{
 }
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-        cb(null,  "./AdharCardPdf");
+        cb(null,  "./adharCardPdf");
     },
   filename: function (req, file, cb) {
     const uniqueSuffix =   Date.now() + path.extname(file.originalname);
@@ -146,7 +131,7 @@ const upload = multer({
     }
     cb("Invalid file format. Only pdf  are allowed");
   },
-}).fields([{name:"aadharCard",maxCount:1},{name:"panCard",maxCount:1}]);
+}).single("aadharCard");
 
 module.exports = {
   getTentant,

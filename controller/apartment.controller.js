@@ -10,6 +10,16 @@ const getDetails = async(req,res)=>{
         res.status(500).json({ msg:"not getting data", status:"failed"})
     }
 }
+const getSuperDetails = async (req, res) => {
+  try {
+    const getData = await ApartmentModel.find();
+    res
+      .status(200)
+      .json({ data: { getData }, msg: "getting data", status: "success" });
+  } catch (error) {
+    res.status(500).json({ msg: "not getting data", status: "failed" });
+  }
+};
 const postApartment = async(req,res)=>{
     let apartmentCoverpic = req.file.path;
     const { title,typeofApartment,_id,description,area,floor,bedRooms,bathRooms,terrace, parking, price,advancePaymentForRent,country,city,status}=req?.body;
@@ -132,5 +142,6 @@ module.exports = {
   putApartment,
   deleteApartment,
   filterApartment,
-  searchApartment
+  searchApartment,
+  getSuperDetails
 };

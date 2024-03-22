@@ -23,7 +23,7 @@ const Login = async(req,res)=>{
            }
             if (await bcrypt.compare(password, admin.password)) {
             const token = jwt.sign({ email: admin.email,role:admin.userType }, jwtSecret, {
-                    expiresIn:"30min",
+                    expiresIn:"30m",
                 })
                 const expiretoken = jwt.verify(token, jwtSecret);
                 const role = admin.userType;

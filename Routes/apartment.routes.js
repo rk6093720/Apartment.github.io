@@ -7,6 +7,7 @@ const {
   deleteApartment,
   filterApartment,
   searchApartment,
+  getSuperDetails,
 } = require("../controller/apartment.controller");
 const { middleware } = require("../middleware-term/auth");
 
@@ -18,7 +19,7 @@ const { adminMiddleware, userMiddleware, superAdminMiddleware } = middleware;
 // Routes for reading apartment details based on user role
 apartmentRouter.get("/read/admin", adminMiddleware, getDetails);
 apartmentRouter.get("/read/user", userMiddleware, getDetails);
-apartmentRouter.get("/read/super-admin", superAdminMiddleware, getDetails);
+apartmentRouter.get("/read/superadmin", superAdminMiddleware, getSuperDetails);
 
 // Route for creating apartment details
 apartmentRouter.post("/create", uploadImage, postApartment);
