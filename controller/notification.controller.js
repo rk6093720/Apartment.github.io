@@ -35,8 +35,7 @@ const postNotification = async (req, res) => {
   try {
     // Check if a notification already exists for the given tentantsId and apartmentId
     const notification = await NotificationModal.findOne({
-      tentantsId,
-      apartmentId,
+      tentantsId
     });
     if (notification && notification.contract === "pending") {
       return res.status(400).json({
@@ -57,7 +56,6 @@ const postNotification = async (req, res) => {
       contract,
       apartmentId,
     });
-    await newNotification.save();
     // Use aggregation pipeline to get details from "tentants" collection
     await ApartmentModel.aggregate([
       {
@@ -103,7 +101,7 @@ const postNotification = async (req, res) => {
         },
       },
     ]);
-
+    await newNotification.save();
     res.status(200).json({
       status: "success",
       msg: "Notification is created successfully",
