@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { MIDDLEUSER, ADMIN, JWTSECRET } = process.env;
-
+const secretKey = process.env.SECRETKEY;
 const middleware = {
   userMiddleware: async (req, res, next) => {
     try {
@@ -9,9 +9,10 @@ const middleware = {
       if (!token) {
         return res.status(401).json({ message: "Unauthorized: Token missing" });
       }
-      const userData = jwt.verify(token, MIDDLEUSER);
+      const userData = await verifyToken(token, MIDDLEUSER);
       console.log("User Data:", userData);
- // Attach user data to request object for further processing
+      // Attach user data to request object for further processing
+      req.user = userData;
       next();
     } catch (error) {
       console.error("User middleware error:", error);
@@ -25,8 +26,10 @@ const middleware = {
       if (!adminToken) {
         return res.status(401).json({ message: "Unauthorized: Token missing" });
       }
-      const adminData = jwt.verify(adminToken, ADMIN);
+      const adminData = await verifyToken(adminToken, ADMIN);
       console.log("Admin Data:", adminData);
+      // Attach admin data to request object for further processing
+      req.admin = adminData;
       next();
     } catch (error) {
       console.error("Admin middleware error:", error);
@@ -40,8 +43,10 @@ const middleware = {
       if (!superAdminToken) {
         return res.status(401).json({ message: "Unauthorized: Token missing" });
       }
-      const superData = jwt.verify(superAdminToken, JWTSECRET);
+      const superData = await verifyToken(superAdminToken, JWTSECRET);
       console.log("SuperAdmin Data:", superData);
+      // Attach super admin data to request object for further processing
+      req.superAdmin = superData;
       next();
     } catch (error) {
       console.error("SuperAdmin middleware error:", error);
@@ -50,4 +55,16 @@ const middleware = {
   },
 };
 
-module.exports = { middleware };
+async function verifyToken(token, secretKey) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(decoded);
+      }
+    });
+  });
+}
+
+module.exports = { middleware, verifyToken };
