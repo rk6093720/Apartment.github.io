@@ -1,15 +1,17 @@
 const jwt = require("jsonwebtoken");
 const { MIDDLEUSER, ADMIN, JWTSECRET } = process.env;
+
 const middleware = {
   userMiddleware: async (req, res, next) => {
     try {
-      const token = req.headers.authorization?.split(" ")[1]; // Safely access the token
-      console.log("User", token);
+      const token = req.headers.authorization?.split(" ")[1];
+      console.log("User Token:", token);
       if (!token) {
         return res.status(401).json({ message: "Unauthorized: Token missing" });
       }
       const userData = jwt.verify(token, MIDDLEUSER);
-      console.log(userData);
+      console.log("User Data:", userData);
+ // Attach user data to request object for further processing
       next();
     } catch (error) {
       console.error("User middleware error:", error);
@@ -18,13 +20,13 @@ const middleware = {
   },
   adminMiddleware: async (req, res, next) => {
     try {
-      const adminToken = req.headers.authorization?.split(" ")[1]; // Safely access the token
-      console.log("Admin", adminToken);
+      const adminToken = req.headers.authorization?.split(" ")[1];
+      console.log("Admin Token:", adminToken);
       if (!adminToken) {
         return res.status(401).json({ message: "Unauthorized: Token missing" });
       }
       const adminData = jwt.verify(adminToken, ADMIN);
-      console.log(adminData);
+      console.log("Admin Data:", adminData);
       next();
     } catch (error) {
       console.error("Admin middleware error:", error);
@@ -33,13 +35,13 @@ const middleware = {
   },
   superAdminMiddleware: async (req, res, next) => {
     try {
-      const superAdminToken = req.headers.authorization?.split(" ")[1]; // Safely access the token
-      console.log("SuperAdmin", superAdminToken);
+      const superAdminToken = req.headers.authorization?.split(" ")[1];
+      console.log("SuperAdmin Token:", superAdminToken);
       if (!superAdminToken) {
         return res.status(401).json({ message: "Unauthorized: Token missing" });
       }
       const superData = jwt.verify(superAdminToken, JWTSECRET);
-      console.log(superData);
+      console.log("SuperAdmin Data:", superData);
       next();
     } catch (error) {
       console.error("SuperAdmin middleware error:", error);
@@ -47,4 +49,5 @@ const middleware = {
     }
   },
 };
+
 module.exports = { middleware };

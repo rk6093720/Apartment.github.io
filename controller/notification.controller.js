@@ -37,6 +37,7 @@ const postNotification = async (req, res) => {
     const notification = await NotificationModal.findOne({
       tentantsId
     });
+    console.log(tentantsId)
     if (notification && notification.contract === "pending") {
       return res.status(400).json({
         status: "failed",
