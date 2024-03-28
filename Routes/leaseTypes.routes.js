@@ -1,8 +1,6 @@
 const { Router } = require("express");
 const { getLeaseTypes, postLeaseTypes, editLeaseTypes, deleteLeaseTypes } = require("../controller/leaseTypes.controller");
 const leaseTypeRouter = Router();
-
-
 leaseTypeRouter.get("/read", getLeaseTypes);
 
 leaseTypeRouter.post("/create", postLeaseTypes);

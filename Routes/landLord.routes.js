@@ -1,11 +1,10 @@
 const {Router} = require("express");
 const { getLandLord, postLandLord, updateLandlord, deleteLandlord, filterLandlord,  upload } = require("../controller/landLord.controller");
 const { middleware } = require("../middleware-term/auth");
-const {userMiddleware,adminMiddleware,superAdminMiddleware}=middleware
 const landLordRouter = Router();
 //get request for landLord;
-landLordRouter.get("/read",userMiddleware, getLandLord);
-landLordRouter.get("/read/super", superAdminMiddleware, getLandLord);
+landLordRouter.get("/read", getLandLord);
+landLordRouter.get("/read/super", getLandLord);
 // landLordRouter.get("/read/superadmin",superAdminMiddleware,getLandLord)
 //post request for landLord;
 landLordRouter.post("/create",upload,postLandLord)
