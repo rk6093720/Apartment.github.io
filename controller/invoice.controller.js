@@ -9,16 +9,52 @@ const getInvoice = async(req,res)=>{
     }
 }
 const postInvoice = async(req,res)=>{
-    const {invoice,date,roomType,period,totalAmount,payment,month,year,rent}=req.body;
+    const {
+      apartmentImage,
+    apartmentAddress,
+    ownerEmail,
+    ownerPhone,
+    invoiceId,
+    date,
+   apartmentType,
+   username,
+   userAddress,
+   userPhone,
+   totalAmount,
+   paymentStatus,
+   water,
+   electricity,
+   month,
+   year,
+   rent,
+    } = req.body;
     const {_id}=req.params;
     try {
         const existInvoice = _id
         ? await InvoiceModal.findById(_id)
-        : await InvoiceModal.findOne({invoice});
+        : await InvoiceModal.findOne({invoiceId});
         if(existInvoice){
             return res.status(401).json({status:"error",msg:"Invoice is already present"})
         }
-        const  newInvoice ={invoice,date,roomType,period,totalAmount,month,year,payment,rent};
+        const newInvoice = {
+          apartmentImage,
+          apartmentAddress,
+          ownerEmail,
+          ownerPhone,
+          invoiceId:generateInvoicenumber(),
+          date,
+          apartmentType,
+          username,
+          userAddress,
+          userPhone,
+          totalAmount,
+          paymentStatus,
+          water,
+          electricity,
+          month,
+          year,
+          rent,
+        };
         const dataInvoice = new InvoiceModal(newInvoice);
         await dataInvoice.save();
         return res.status(200).json({status:"Success",msg:"Invoice is create Successfully", AddInvoice:dataInvoice})
@@ -48,6 +84,9 @@ const deleteInvoice= async(req,res)=>{
     } catch (error) {
         return res.status(500).json({status:"error",msg:"not deleted"})
     }
+}
+function generateInvoicenumber(){
+    return `INV-00${Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000}`;
 }
 module.exports ={
     getInvoice,

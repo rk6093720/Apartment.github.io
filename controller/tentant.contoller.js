@@ -119,7 +119,15 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix);
   },
 });
-
+const adminTentant = async (req, res) => {
+  try {
+    const getNewTentant = await TentantModal.find();
+    res.status(200).json({ Tentant: getNewTentant, status: "success" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "error" });
+  }
+};
 const upload = multer({
   storage: storage,
   limits: { fileSize: 1024 * 1024 * 50 }, // 50 MB limit
@@ -132,11 +140,21 @@ const upload = multer({
     cb("Invalid file format. Only pdf  are allowed");
   },
 }).single("aadharCard");
-
+const superTentant = async (req, res) => {
+  try {
+    const getNewTentant = await TentantModal.find();
+    res.status(200).json({ Tentant: getNewTentant, status: "success" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "error" });
+  }
+};
 module.exports = {
   getTentant,
   postTentant,
   upload,
   editTentant,
-  deleteTentant
+  deleteTentant,
+  superTentant,
+  adminTentant
 };

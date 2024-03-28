@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const { MIDDLEUSER, ADMIN, JWTSECRET } = process.env;
-const secretKey = process.env.SECRETKEY;
 const middleware = {
   userMiddleware: async (req, res, next) => {
     try {
@@ -26,7 +25,7 @@ const middleware = {
       if (!adminToken) {
         return res.status(401).json({ message: "Unauthorized: Token missing" });
       }
-      const adminData = await verifyToken(adminToken, ADMIN);
+      const adminData = await verifyToken(adminToken,ADMIN);
       console.log("Admin Data:", adminData);
       // Attach admin data to request object for further processing
       req.admin = adminData;
@@ -57,7 +56,7 @@ const middleware = {
 
 async function verifyToken(token, secretKey) {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, secretKey, (err, decoded) => {
+    jwt.verify(token,secretKey,(err, decoded) => {
       if (err) {
         reject(err);
       } else {

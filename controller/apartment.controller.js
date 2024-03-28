@@ -10,6 +10,16 @@ const getDetails = async(req,res)=>{
         res.status(500).json({ msg:"not getting data", status:"failed"})
     }
 }
+const adminDetails = async (req, res) => {
+  try {
+    const getData = await ApartmentModel.find();
+    res
+      .status(200)
+      .json({ data: { getData }, msg: "getting data", status: "success" });
+  } catch (error) {
+    res.status(500).json({ msg: "not getting data", status: "failed" });
+  }
+};
 const getSuperDetails = async (req, res) => {
   try {
     const getData = await ApartmentModel.find();
@@ -143,5 +153,6 @@ module.exports = {
   deleteApartment,
   filterApartment,
   searchApartment,
-  getSuperDetails
+  getSuperDetails,
+  adminDetails
 };

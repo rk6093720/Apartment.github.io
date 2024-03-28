@@ -1,11 +1,10 @@
-debugger
-const { AdminModal } = require("../modal/admin.modal");
 const jwt=require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const jwtSecret= process.env.JWTSECRET;
 const nodemailer=require("nodemailer");
 const secret = process.env.ADMIN;
 const user = process.env.MIDDLEUSER;
+const { AdminModal } = require("../modal/admin.modal");
 const Login = async(req,res)=>{
     try {
         const { email, password,userType, createdAt, timeStamp, } = req.body;
