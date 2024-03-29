@@ -35,7 +35,7 @@ const postNotification = async (req, res) => {
   try {
     // Check if a notification already exists for the given tentantsId and apartmentId
     const notification = await NotificationModal.findOne({
-      tentantsId
+      $or:[{tentantsId},{apartmentId}],
     });
     console.log(tentantsId)
     if (notification && notification.contract === "pending") {

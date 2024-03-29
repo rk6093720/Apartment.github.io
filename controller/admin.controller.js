@@ -7,7 +7,7 @@ const user = process.env.MIDDLEUSER;
 const { AdminModal } = require("../modal/admin.modal");
 const Login = async(req,res)=>{
     try {
-        const { email, password,userType, createdAt, timeStamp, } = req.body;
+        const { email, password } = req.body;
         if (email === "admin@gmail.com") {
             const admin = await AdminModal.findOne({ email: "admin@gmail.com"})
             if (!admin) {
@@ -15,9 +15,7 @@ const Login = async(req,res)=>{
             const newAdmin = await AdminModal({
                 email,
                 password: encrypt,
-                userType,
-                createdAt,
-                timeStamp
+                userType:'SuperAdmin'
             });
             await newAdmin.save();
            }
@@ -51,7 +49,7 @@ const Login = async(req,res)=>{
 }
 
 const OwnerSignUp= async(req,res)=>{
-    const { email, password, userType, createdAt, timeStamp } = req.body;
+    const { email, password, userType } = req.body;
     try {
         const owner = await AdminModal.findOne({email});
         if(owner){
@@ -61,9 +59,7 @@ const OwnerSignUp= async(req,res)=>{
         const newOwner = await AdminModal({
           email,
           password: hashed,
-          userType, 
-          createdAt,
-          timeStamp,
+          userType
         });
         await newOwner.save();
         return res.status(200).json({status:"success", data:{newOwner} ,msg:"Signup is Created Successfully"})
@@ -162,33 +158,33 @@ const UserLogin = async(req,res)=>{
         return res.status(500).json({status:"Error",msg:"something went wrong"})
     }
 }
-const adminData=async(req,res)=>{
-    const { token } = req.body;
-    console.log(token)
-    try {
-        const user = jwt.verify(token, jwtSecret, (err, res) => {
-            if (err) {
-                return "token expired";
-            }
-            return res;
-        });
-        console.log(user);
-        if (user == "token expired") {
-            return res.status(401).json({ status: "error", data: "token expired" });
-        }
+// const adminData=async(req,res)=>{
+//     const { token } = req.body;
+//     console.log(token)
+//     try {
+//         const user = jwt.verify(token, jwtSecret, (err, res) => {
+//             if (err) {
+//                 return "token expired";
+//             }
+//             return res;
+//         });
+//         console.log(user);
+//         if (user == "token expired") {
+//             return res.status(401).json({ status: "error", data: "token expired" });
+//         }
 
-        const userEmail = user.email;
-        AdminModal.find( userEmail )
-            .then((data) => {
-                res.status(200).json({ status: "success", data: data });
-            })
-            .catch((error) => {
-                res.status(401).json({ status: "error", data: error });
-            });
-    } catch (error) {
-        res.status(500).json({ status: "error", data: error });
-     }
-}
+//         const userEmail = user.email;
+//         AdminModal.find( userEmail )
+//             .then((data) => {
+//                 res.status(200).json({ status: "success", data: data });
+//             })
+//             .catch((error) => {
+//                 res.status(401).json({ status: "error", data: error });
+//             });
+//     } catch (error) {
+//         res.status(500).json({ status: "error", data: error });
+//      }
+// }
 const forgetPassword = async (req, res) => {
     const { email } = req.body;
     try {
@@ -333,7 +329,7 @@ module.exports={
    forgetPassword,
     resetPassword,
     postResetPassword,
-    adminData,
+    // adminData,
     Logout,
     OwnerLogin,
     OwnerSignUp,
