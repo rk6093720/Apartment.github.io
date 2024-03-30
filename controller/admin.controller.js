@@ -1,52 +1,72 @@
 const jwt=require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const jwtSecret= process.env.JWTSECRET;
 const nodemailer=require("nodemailer");
-const secret = process.env.ADMIN;
-const user = process.env.MIDDLEUSER;
 const { AdminModal } = require("../modal/admin.modal");
-const Login = async(req,res)=>{
-    try {
-        const { email, password } = req.body;
-        if (email === "admin@gmail.com") {
-            const admin = await AdminModal.findOne({ email: "admin@gmail.com"})
-            if (!admin) {
-            const encrypt = await bcrypt.hash(password, 10);
-            const newAdmin = await AdminModal({
-                email,
-                password: encrypt,
-                userType:'SuperAdmin'
-            });
-            await newAdmin.save();
-           }
-            if (await bcrypt.compare(password, admin.password)) {
-            const token = jwt.sign({ email: admin.email,role:admin.userType }, jwtSecret, {
-                    expiresIn:"30m",
-                })
-                const expiretoken = jwt.verify(token, jwtSecret);
-                const role = admin.userType;
-                if (token && role === "SuperAdmin") {
-                    return res
-                      .status(201)
-                      .json({
-                        status: "success",
-                        data: {
-                          token,
-                          role,
-                          email,
-                          expiresIn: expiretoken.exp,
-                        },
-                      });
-                }
-            }else{
-                return  res.status(401).json({ status: "error", error: "InvAlid Password" });  
-            }
+const jwtSecret = process.env.JWTSECRET;
+const Login = async (req, res) => {
+  const { email, password } = req.body;
+  try { 
+      if (email === "admin@gmail.com") {
+        const admin = await AdminModal.findOne({ email: "admin@gmail.com" });
+        if (!admin) {
+          const encrypt = await bcrypt.hash(password, 10);
+          const newAdmin = await AdminModal({
+            email,
+            password: encrypt,
+            userType: "SuperAdmin",
+          });
+          await newAdmin.save();
         }
-    } catch (error) {
-        console.error("Error in login:", error);
-      return  res.status(500).send({ msg: "Internal Server Error" });
     }
-}
+        const user = await AdminModal.findOne({ email });
+        if (!user) {
+          return res
+            .status(401)
+            .json({ status: "Error", msg: `${user.userType} not found` });
+        }
+
+        if (await bcrypt.compare(password, user.password)) {
+          let expiresIn;
+          if (email === "admin@gmail.com" && user.userType === "SuperAdmin") {
+            expiresIn = "20m"; // Example: SuperAdmin token expires in 1 day
+          } else if (user.userType === "Admin") {
+            expiresIn = "20m";
+          } else if (user.userType === "User") {
+            expiresIn = "30m";
+          } else {
+            return res
+              .status(401)
+              .json({ status: "Error", msg: "Invalid user type" });
+          }
+
+          const token = jwt.sign(
+            { email: user.email, role: user.userType },
+            jwtSecret,
+            { expiresIn }
+          );
+          const expiretoken = jwt.verify(token, jwtSecret);
+          return res.status(200).json({
+            status: "success",
+            data: {
+              token,
+              role: user.userType,
+              email: user.email,
+              expiresIn: expiretoken.exp,
+            },
+            msg: `${user.userType} has logged in`,
+          });
+        } else {
+          return res
+            .status(401)
+            .json({ status: "error", msg: "Invalid Password" });
+        }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ status: "Error", msg: "Something went wrong" });
+  }
+};
 
 const OwnerSignUp= async(req,res)=>{
     const { email, password, userType } = req.body;
@@ -68,96 +88,96 @@ const OwnerSignUp= async(req,res)=>{
         return res.status(500).json({status:"error",msg:"Signup is not Created"})
     }
 }
-const OwnerLogin = async(req,res)=>{
-    const {email,password}= req.body;
-    try {
-        if (!email || !password) {
-            return res.status(400).json({ status: "Error", msg: "Email and password are required" });
-        }
-        const login = await AdminModal.findOne({email})
-        if(!login){
-            return res.status(401).json({status:"Error", msg:"Email is Already Present"})
-        }
-        if(await bcrypt.compare(password,login.password)){
-            // console.log(session)
-            const token = jwt.sign(
-              { email: login.email, role: login.userType },
-              secret,
-              {
-                expiresIn: "20m",
-              }
-            );
-             const expiretoken = jwt.verify(token, secret);
-            const role = login.userType;
-            if (token && role === "Admin" ) {
-                    return res
-                      .status(200)
-                      .json({
-                        status: "success",
-                        data: {
-                          token,
-                          role,
-                          email,
-                          adminTokenExpire: expiretoken.exp,
-                        },
-                        msg: "Admin has login here",
-                      });
-             }
-            else{
-                return res.status(401).json({ status: "error", error: `Not an ${role}` , msg:" it is only for admin" });
-             }
-        }else{
-        return  res.status(401).json({ status: "error", error: "InvAlid Password",msg:"Invalid Password" });  
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({status:"Error",msg:"something went wrong"})
-    }
-}
-const UserLogin = async(req,res)=>{
-    const {email,password}= req.body;
-    try {
-        if (!email || !password) {
-            return res.status(400).json({ status: "Error", msg: "Email and password are required" });
-        }
-        const login = await AdminModal.findOne({email})
-        if(!login){
-            return res.status(401).json({status:"Error", msg:"Email is Already Present"})
-        }
-        if(await bcrypt.compare(password,login.password)){
-          const token = jwt.sign(
-            { email: login.email, role: login.userType },
-            user,
-            {
-              expiresIn: "30m",
-            }
-          );
-              const role = login.userType;
-          const expiretoken = jwt.verify(token, user);
-          if (token && role === "User") {
-            return res.status(200).json({
-              status: "success",
-              data: { token, role, email, expire: expiretoken.exp },
-              msg: "User has login here",
-            });
-          } else {
-            return res
-              .status(401)
-              .json({
-                status: "error",
-                error: `Not an ${role}`,
-                msg: " it is only for  user",
-              });
-          }
-        }else{
-            console.log("invaalid pwd")
-        return  res.status(401).json({ status: "error", error: "InvAlid Password",msg:"Invalid Password" });  
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({status:"Error",msg:"something went wrong"})
-    }
-}
+// const OwnerLogin = async(req,res)=>{
+//     const {email,password}= req.body;
+//     try {
+//         if (!email || !password) {
+//             return res.status(400).json({ status: "Error", msg: "Email and password are required" });
+//         }
+//         const login = await AdminModal.findOne({email})
+//         if(!login){
+//             return res.status(401).json({status:"Error", msg:"Email is Already Present"})
+//         }
+//         if(await bcrypt.compare(password,login.password)){
+//             // console.log(session)
+//             const token = jwt.sign(
+//               { email: login.email, role: login.userType },
+//               secret,
+//               {
+//                 expiresIn: "20m",
+//               }
+//             );
+//              const expiretoken = jwt.verify(token, secret);
+//             const role = login.userType;
+//             if (token && role === "Admin" ) {
+//                     return res
+//                       .status(200)
+//                       .json({
+//                         status: "success",
+//                         data: {
+//                           token,
+//                           role,
+//                           email,
+//                           adminTokenExpire: expiretoken.exp,
+//                         },
+//                         msg: "Admin has login here",
+//                       });
+//              }
+//             else{
+//                 return res.status(401).json({ status: "error", error: `Not an ${role}` , msg:" it is only for admin" });
+//              }
+//         }else{
+//         return  res.status(401).json({ status: "error", error: "InvAlid Password",msg:"Invalid Password" });  
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(500).json({status:"Error",msg:"something went wrong"})
+//     }
+// }
+// const UserLogin = async(req,res)=>{
+//     const {email,password}= req.body;
+//     try {
+//         if (!email || !password) {
+//             return res.status(400).json({ status: "Error", msg: "Email and password are required" });
+//         }
+//         const login = await AdminModal.findOne({email})
+//         if(!login){
+//             return res.status(401).json({status:"Error", msg:"Email is Already Present"})
+//         }
+//         if(await bcrypt.compare(password,login.password)){
+//           const token = jwt.sign(
+//             { email: login.email, role: login.userType },
+//             user,
+//             {
+//               expiresIn: "30m",
+//             }
+//           );
+//               const role = login.userType;
+//           const expiretoken = jwt.verify(token, user);
+//           if (token && role === "User") {
+//             return res.status(200).json({
+//               status: "success",
+//               data: { token, role, email, expire: expiretoken.exp },
+//               msg: "User has login here",
+//             });
+//           } else {
+//             return res
+//               .status(401)
+//               .json({
+//                 status: "error",
+//                 error: `Not an ${role}`,
+//                 msg: " it is only for  user",
+//               });
+//           }
+//         }else{
+//             console.log("invaalid pwd")
+//         return  res.status(401).json({ status: "error", error: "InvAlid Password",msg:"Invalid Password" });  
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(500).json({status:"Error",msg:"something went wrong"})
+//     }
+// }
 // const adminData=async(req,res)=>{
 //     const { token } = req.body;
 //     console.log(token)
@@ -331,7 +351,7 @@ module.exports={
     postResetPassword,
     // adminData,
     Logout,
-    OwnerLogin,
+    // OwnerLogin,
     OwnerSignUp,
-    UserLogin
+    // UserLogin
 }

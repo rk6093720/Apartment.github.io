@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const adminSchema = new mongoose.Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
-  userType: { type: String,enum:["Admin,SuperAdmin","User"], required: true },
+  userType: { type: String, required: true },
   verifyToken: { type: String },
 },
 {timestamps:true}

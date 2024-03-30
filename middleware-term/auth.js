@@ -1,8 +1,6 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const secretAdmin = process.env.ADMIN;
-const secretUser = process.env.MIDDLEUSER;
-const secretSuperAdmin = process.env.JWTSECRET;
+const secretSuperAdmin = process.env.JWTSECRET;// superadmin is secret key hai 
 function auth(req, res, next) {
   const tokenHeader = req.headers["authorization"];
   if (!tokenHeader) {
@@ -12,28 +10,13 @@ function auth(req, res, next) {
   if (!token) {
     return res.status(400).json({ message: "Invalid Token" });
   }
-  jwt.verify(token, secretAdmin, (err, decoded) => {
-    if (!err && decoded) {
-      console.log("Admin role decoded:", decoded.role);
+  jwt.verify(token, secretSuperAdmin, (err, decoded) => {
+    if (err) {
+    } else {
+      console.log(`${decoded.role} decoded:`, decoded.role);
       req.userRole = decoded.role;
-      return next();
+      next();
     }
-    jwt.verify(token, secretUser, (err, decoded) => {
-      if (!err && decoded) {
-        console.log("User role decoded:", decoded.role);
-        req.userRole = decoded.role;
-        return next();
-      }
-      jwt.verify(token, secretSuperAdmin, (err, decoded) => {
-        if (!err && decoded) {
-          console.log("Super admin role decoded:", decoded.role);
-          req.userRole = decoded.role;
-          return next();
-        }
-        console.error("Invalid token:", err);
-        return res.status(401).json({ message: "Invalid Token" });
-      });
-    });
   });
 }
 

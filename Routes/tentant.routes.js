@@ -1,14 +1,13 @@
 const {Router} = require("express");
 const { getTentant, postTentant, editTentant, deleteTentant, upload, superTentant } = require("../controller/tentant.contoller");
+const { auth } = require("../middleware-term/auth");
 const tentantRouter = Router();
-tentantRouter.get(
-  "/read/admin"
-);
-tentantRouter.get("/read/user", getTentant);
+tentantRouter.get("/read/admin",auth,getTentant);
+tentantRouter.get("/read/user",auth, getTentant);
 tentantRouter.post("/create",upload,postTentant);
 tentantRouter.put("/update/:id",upload,editTentant);
 tentantRouter.delete("/remove/:id",deleteTentant);
-tentantRouter.get("/read/super", superTentant);
+tentantRouter.get("/read/super",auth, superTentant);
 module.exports={
     tentantRouter
 } 
