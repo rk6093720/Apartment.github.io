@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const invoiceSchema = new mongoose.Schema({
+    apartmentName:{type:String},
     apartmentImage:{type:String},
     apartmentAddress:{type:String},
     ownerEmail:{type:String},
     ownerPhone:{type:String},
-   invoiceId:{type:String,required:true},
+   invoice:{type:String,required:true},
    date:{type:String,required:true,default:new Date()},
    apartmentType:{type:String,required:true},
    username:{type:String},
@@ -17,7 +18,7 @@ const invoiceSchema = new mongoose.Schema({
    month:{type:String,required:true},
    year:{type:String,required:true},
    rent:{type:String,required:true},
-})
+},{timestamps:true})
 const InvoiceModal = mongoose.model("invoice", invoiceSchema);
 module.exports={
     InvoiceModal

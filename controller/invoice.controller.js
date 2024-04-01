@@ -10,12 +10,13 @@ const getInvoice = async(req,res)=>{
 }
 const postInvoice = async(req,res)=>{
     const {
-      apartmentImage,
+     apartmentName,
+    apartmentImage,
     apartmentAddress,
     ownerEmail,
     ownerPhone,
-    invoiceId,
-    date,
+   invoice,
+   date,
    apartmentType,
    username,
    userAddress,
@@ -26,34 +27,35 @@ const postInvoice = async(req,res)=>{
    electricity,
    month,
    year,
-   rent,
+   rent
     } = req.body;
     const {_id}=req.params;
     try {
         const existInvoice = _id
         ? await InvoiceModal.findById(_id)
-        : await InvoiceModal.findOne({invoiceId});
+        : await InvoiceModal.findOne({invoice});
         if(existInvoice){
             return res.status(401).json({status:"error",msg:"Invoice is already present"})
         }
         const newInvoice = {
           apartmentImage,
+          apartmentName,
           apartmentAddress,
           ownerEmail,
           ownerPhone,
-          invoiceId:generateInvoicenumber(),
+          invoice:generateInvoicenumber(),
           date,
           apartmentType,
           username,
           userAddress,
           userPhone,
-          totalAmount,
+          totalAmount: `₹${totalAmount(water,electricity,rent)}`,
           paymentStatus,
           water,
           electricity,
           month,
           year,
-          rent,
+          rent
         };
         const dataInvoice = new InvoiceModal(newInvoice);
         await dataInvoice.save();
@@ -65,10 +67,46 @@ const postInvoice = async(req,res)=>{
 }
 const putInvoice = async(req,res)=>{
     const {id} = req.params;
-    const {invoice,date,roomType,period,totalAmount,payment,month,year,rent}=req.body;
-    const newInvoice ={
-        invoice,date,roomType,period,totalAmount,payment,rent,month,year
-    }
+    const {
+      apartmentName,
+      apartmentImage,
+      apartmentAddress,
+      ownerEmail,
+      ownerPhone,
+      invoice,
+      date,
+      apartmentType,
+      username,
+      userAddress,
+      userPhone,
+      totalAmount,
+      paymentStatus,
+      water,
+      electricity,
+      month,
+      year,
+      rent,
+    } = req.body;
+    const newInvoice = {
+      apartmentName,
+      apartmentImage,
+      apartmentAddress,
+      ownerEmail,
+      ownerPhone,
+      invoice,
+      date,
+      apartmentType,
+      username,
+      userAddress,
+      userPhone,
+      totalAmount,
+      paymentStatus,
+      water,
+      electricity,
+      month,
+      year,
+      rent,
+    };
     try {
         const editInvoice = await InvoiceModal.findOneAndUpdate({_id:id},newInvoice, {new:true});
         return res.status(200).json({status:"Success", msg:"edited Successfully",editInvoice})
@@ -87,6 +125,11 @@ const deleteInvoice= async(req,res)=>{
 }
 function generateInvoicenumber(){
     return `INV-00${Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000}`;
+}
+function totalAmount(water, electricity,rent){
+    let sum =0;
+    sum = sum + water + electricity + rent;
+    return sum;
 }
 module.exports ={
     getInvoice,
