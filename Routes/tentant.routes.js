@@ -7,7 +7,7 @@ tentantRouter.get("/read/user",auth, getTentant);
 tentantRouter.post("/create",upload,postTentant);
 tentantRouter.put("/update/:id",upload,editTentant);
 tentantRouter.delete("/remove/:id",deleteTentant);
-tentantRouter.get("/read/super",auth, superTentant);
+tentantRouter.get("/read/superadmin",auth, superTentant);
 module.exports={
     tentantRouter
 } 

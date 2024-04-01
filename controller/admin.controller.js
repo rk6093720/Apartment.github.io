@@ -44,11 +44,14 @@ const Login = async (req, res) => {
             jwtSecret,
             { expiresIn }
           );
+          const refresh = jwt.sign({email:user.email, role:user.userType},"refresh",{expiresIn:"20m"})
+          user.refreshToken=refresh;
           const expiretoken = jwt.verify(token, jwtSecret);
           return res.status(200).json({
             status: "success",
             data: {
               token,
+              refresh,
               role: user.userType,
               email: user.email,
               expiresIn: expiretoken.exp,
