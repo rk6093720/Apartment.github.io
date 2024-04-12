@@ -3,6 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs/promises");
 const getDetails = async(req,res)=>{
+  console.log("res")
     try {
         const getData = await ApartmentModel.find();
         res.status(200).json({data:{getData}, msg:"getting data", status:"success"})
