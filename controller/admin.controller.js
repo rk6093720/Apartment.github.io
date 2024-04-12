@@ -17,7 +17,7 @@ const Login = async (req, res) => {
           });
           await newAdmin.save();
         }
-    }
+      }
         const user = await AdminModal.findOne({ email });
         if (!user) {
           return res
@@ -91,123 +91,6 @@ const OwnerSignUp= async(req,res)=>{
         return res.status(500).json({status:"error",msg:"Signup is not Created"})
     }
 }
-// const OwnerLogin = async(req,res)=>{
-//     const {email,password}= req.body;
-//     try {
-//         if (!email || !password) {
-//             return res.status(400).json({ status: "Error", msg: "Email and password are required" });
-//         }
-//         const login = await AdminModal.findOne({email})
-//         if(!login){
-//             return res.status(401).json({status:"Error", msg:"Email is Already Present"})
-//         }
-//         if(await bcrypt.compare(password,login.password)){
-//             // console.log(session)
-//             const token = jwt.sign(
-//               { email: login.email, role: login.userType },
-//               secret,
-//               {
-//                 expiresIn: "20m",
-//               }
-//             );
-//              const expiretoken = jwt.verify(token, secret);
-//             const role = login.userType;
-//             if (token && role === "Admin" ) {
-//                     return res
-//                       .status(200)
-//                       .json({
-//                         status: "success",
-//                         data: {
-//                           token,
-//                           role,
-//                           email,
-//                           adminTokenExpire: expiretoken.exp,
-//                         },
-//                         msg: "Admin has login here",
-//                       });
-//              }
-//             else{
-//                 return res.status(401).json({ status: "error", error: `Not an ${role}` , msg:" it is only for admin" });
-//              }
-//         }else{
-//         return  res.status(401).json({ status: "error", error: "InvAlid Password",msg:"Invalid Password" });  
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).json({status:"Error",msg:"something went wrong"})
-//     }
-// }
-// const UserLogin = async(req,res)=>{
-//     const {email,password}= req.body;
-//     try {
-//         if (!email || !password) {
-//             return res.status(400).json({ status: "Error", msg: "Email and password are required" });
-//         }
-//         const login = await AdminModal.findOne({email})
-//         if(!login){
-//             return res.status(401).json({status:"Error", msg:"Email is Already Present"})
-//         }
-//         if(await bcrypt.compare(password,login.password)){
-//           const token = jwt.sign(
-//             { email: login.email, role: login.userType },
-//             user,
-//             {
-//               expiresIn: "30m",
-//             }
-//           );
-//               const role = login.userType;
-//           const expiretoken = jwt.verify(token, user);
-//           if (token && role === "User") {
-//             return res.status(200).json({
-//               status: "success",
-//               data: { token, role, email, expire: expiretoken.exp },
-//               msg: "User has login here",
-//             });
-//           } else {
-//             return res
-//               .status(401)
-//               .json({
-//                 status: "error",
-//                 error: `Not an ${role}`,
-//                 msg: " it is only for  user",
-//               });
-//           }
-//         }else{
-//             console.log("invaalid pwd")
-//         return  res.status(401).json({ status: "error", error: "InvAlid Password",msg:"Invalid Password" });  
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).json({status:"Error",msg:"something went wrong"})
-//     }
-// }
-// const adminData=async(req,res)=>{
-//     const { token } = req.body;
-//     console.log(token)
-//     try {
-//         const user = jwt.verify(token, jwtSecret, (err, res) => {
-//             if (err) {
-//                 return "token expired";
-//             }
-//             return res;
-//         });
-//         console.log(user);
-//         if (user == "token expired") {
-//             return res.status(401).json({ status: "error", data: "token expired" });
-//         }
-
-//         const userEmail = user.email;
-//         AdminModal.find( userEmail )
-//             .then((data) => {
-//                 res.status(200).json({ status: "success", data: data });
-//             })
-//             .catch((error) => {
-//                 res.status(401).json({ status: "error", data: error });
-//             });
-//     } catch (error) {
-//         res.status(500).json({ status: "error", data: error });
-//      }
-// }
 const forgetPassword = async (req, res) => {
     const { email } = req.body;
     try {
@@ -352,9 +235,6 @@ module.exports={
    forgetPassword,
     resetPassword,
     postResetPassword,
-    // adminData,
     Logout,
-    // OwnerLogin,
-    OwnerSignUp,
-    // UserLogin
+    OwnerSignUp 
 }

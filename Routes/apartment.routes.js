@@ -16,10 +16,8 @@ const apartmentRouter = Router();
 apartmentRouter.get("/read/admin",auth, getDetails);
 apartmentRouter.get("/read/user",auth, getDetails);
 apartmentRouter.get("/read/superadmin",auth, getSuperDetails);
-
 // Route for creating apartment details
 apartmentRouter.post("/create", uploadImage, postApartment);
-
 // Route for updating apartment details
 apartmentRouter.put("/update/:id", uploadImage, putApartment);
 

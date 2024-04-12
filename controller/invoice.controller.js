@@ -21,7 +21,6 @@ const postInvoice = async(req,res)=>{
    username,
    userAddress,
    userPhone,
-   totalAmount,
    paymentStatus,
    water,
    electricity,
@@ -49,7 +48,7 @@ const postInvoice = async(req,res)=>{
           username,
           userAddress,
           userPhone,
-          totalAmount: `₹${totalAmount(water,electricity,rent)}`,
+          totalAmount: `₹${Amount(water,electricity,rent)}`,
           paymentStatus,
           water,
           electricity,
@@ -126,7 +125,7 @@ const deleteInvoice= async(req,res)=>{
 function generateInvoicenumber(){
     return `INV-00${Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000}`;
 }
-function totalAmount(water, electricity,rent){
+function Amount(water, electricity,rent){
     let sum =0;
     sum = sum + water + electricity + rent;
     return sum;
